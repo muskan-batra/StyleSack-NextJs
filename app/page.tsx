@@ -1,95 +1,47 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { stripe } from "@/lib/stripe";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { CarouselData } from "@/components/carousel";
 
-export default function Home() {
+export default async function Home() {
+  const products = await stripe.products.list({
+    expand: ["data.default_price"],
+    limit: 5,
+  });
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+    <div>
+      {/* Hero Section */}
+      <section className="flex items-center justify-between px-10 py-20 bg-gray-100 rounded-lg">
+        {/* Left Side: Text + Button */}
+        <div className="max-w-lg">
+          <h2 className="text-4xl font-bold mb-4">Welcome to StyleSack</h2>
+          <p className="text-lg text-gray-700 mb-6">
+            Discover the all latest bags at great price
+          </p>
+          <Button asChild variant="default">
+            <Link href="/products">Explore Bags</Link>
+          </Button>
         </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+
+        {/* Right Side: Product Image */}
+        <div>
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            alt="Bags"
+            width={450}
+            height={450}
+            src={products.data[0].images[0]}
+            className="object-contain"
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        </div>
+      </section>
+
+      {/* Carousel Section */}
+      <section className="px-10 py-12">
+        <CarouselData products={products.data} />
+      </section>
     </div>
   );
 }
